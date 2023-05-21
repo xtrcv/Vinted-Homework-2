@@ -1,0 +1,64 @@
+---
+- name: Configure Atlantis server on GCP instances
+  hosts: atlantis-instance
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - unzip
+          - git
+        state: present
+
+    - name: Download and install Atlantis
+      get_url:
+        url: https://github.com/runatlantis/atlantis/releases/download/v{{ atlantis_version }}/atlantis_linux_amd64.zip
+        dest: /tmp/atlantis_linux_amd64.zip
+      vars:
+        atlantis_version: 0.17.5
+
+    - name: Unzip Atlantis binary
+      unarchive:
+        src: /tmp/atlantis_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: yes
+        mode: 0755
+
+    - name: Create Atlantis user
+      user:
+        name: atlantis
+        system: yes
+        shell: /bin/false
+
+    - name: Create Atlantis directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: atlantis
+        group: atlantis
+      loop:
+        - /etc/atlantis
+        - /var/log/atlantis
+        - /var/lib/atlantis
+
+    - name: Configure Atlantis
+      template:
+        src: templates/atlantis.yaml.j2
+        dest: /etc/atlantis/atlantis.yaml
+        owner: atlantis
+        group: atlantis
+        mode: 0644
+
+    - name: Setup Atlantis service
+      template:
+        src: templates/atlantis.service.j2
+        dest: /etc/systemd/system/atlantis.service
+        mode: 0644
+
+    - name: Enable and start Atlantis service
+      systemd:
+        name: atlantis
+        enabled: yes
+        state: started

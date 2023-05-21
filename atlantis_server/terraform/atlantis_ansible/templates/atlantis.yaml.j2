@@ -1,0 +1,9 @@
+---
+atlantis_url: {{ atlantis_url }}
+repo_allowlist: {{ repo_allowlist }}
+repos:
+{% for repo in repos %}
+- id: {{ repo.id }}
+  allowed_overrides: {{ repo.allowed_overrides | join(', ') }}
+  allow_custom_workflows: {{ repo.allow_custom_workflows }}
+{% endfor %}

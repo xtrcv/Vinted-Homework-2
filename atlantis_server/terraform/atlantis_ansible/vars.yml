@@ -1,0 +1,10 @@
+---
+remote_user: "ubuntu"
+atlantis_url: "http://10.0.1.42"
+repo_allowlist: "github.com/xtrcv/*"
+repos:
+  - id: "github.com/xtrcv/Homework/"
+    allowed_overrides:
+      - "apply"
+      - "plan"
+    allow_custom_workflows: true

@@ -1,0 +1,15 @@
+plugin: gcp_compute
+projects:
+  - "vinted-testavimui"
+auth_kind: application
+keyed_groups:
+  - key: zone
+    prefix: zone
+hostnames:
+  - name
+scopes:
+  - https://www.googleapis.com/auth/compute
+filters:
+  - labels.atlantis=true
+compose:
+  ansible_connection: "'local' if name == 'atlantis-instance' else 'ssh'"

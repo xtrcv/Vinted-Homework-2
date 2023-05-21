@@ -1,0 +1,15 @@
+[Unit]
+Description=Atlantis - Terraform Collaboration Tool
+Documentation=https://www.runatlantis.io
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=atlantis
+Group=atlantis
+ExecStart=/usr/local/bin/atlantis server --config /etc/atlantis/atlantis.yaml
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
